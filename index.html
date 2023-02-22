@@ -189,17 +189,15 @@ fn create_comment(comment: Comment) -&gt; ExternResult&lt;ActionHash&gt; {
   let anchor = Anchor(String::from("all_comments"));
 
   // Create the anchor entry
-  let action_hash<span class="fragment fade-in-then-out popover">This hash is not deterministic: it will be different every time this function is executed</span> = create_entry(EntryTypes::Anchor(anchor))?;
+  let _anchor_action_hash<span class="fragment fade-in-then-out popover">This hash is not deterministic: it will be different every time this function is executed</span> = create_entry(EntryTypes::Anchor(anchor))?;
   
-  let anchor_hash <span class="fragment fade-in-then-out popover">Hash is deterministic: will be the same independently of which cells executes this function</span>= hash_entry(anchor)?; // This hash is deterministic
-
-  let all_comments_anchor =  anchor(LinkTypes::AnchorToComment)?;
+  let anchor_entry_hash <span class="fragment fade-in-then-out popover">Hash is deterministic: will be the same independently of which cells executes this function</span>= hash_entry(anchor)?; // This hash is deterministic
 
   create_link(
-    anchor_hash, comment_action_hash, LinkTypes::AnchorToComment, ()
+    anchor_entry_hash, comment_action_hash, LinkTypes::AnchorToComment, ()
   )?;
 
-  Ok(action_hash)
+  Ok(comment_action_hash)
 }
 
 #[hdk_extern]
@@ -277,7 +275,7 @@ fn create_comment(comment: Comment) -&gt; ExternResult&lt;ActionHash&gt; {
     ()
   )?;
 
-  Ok(action_hash)
+  Ok(comment_action_hash)
 }
 </code></pre></fragment></section>
 
