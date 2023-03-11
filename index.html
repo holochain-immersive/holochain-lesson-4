@@ -314,7 +314,7 @@ fn get_comments_by_year(year: u32) -> ExternResult&lt;Vec&lt;ActionHash&gt;&gt; 
       .ok_or(Err(wasm_error!(WasmErrorInner::Guest(String::from("The path is empty")))))?.clone(); 
     let month = String::try_from(last_component).map_err(|err| wasm_error!(err))?;<span class="fragment fade-in-then-out popover">Converts the component's byte array to a string</span> // Converts the component to a string
   
-    let mut links = get_links(anchor_hash, LinkTypes::PathToComment, None)?; // Get all the links created above
+    let mut links = get_links(path.path_entry_hash()?, LinkTypes::PathToComment, None)?; // Get all the links created above
     all_links.append(&mut links); // Collect the links
   }
 
