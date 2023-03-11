@@ -280,6 +280,7 @@ fn create_comment(comment: Comment) -&gt; ExternResult&lt;ActionHash&gt; {
   <fragment animate="by-line with-ancestry balanced separate-comments">
     <h3>Paths (roll-ups)</h3>
 
+<span>
     <pre class="fragment fade-in"><code class="rust" data-noescape="">
 #[hdk_extern]
 fn get_comments_by_year(year: u32) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&gt; {
@@ -289,6 +290,10 @@ fn get_comments_by_year(year: u32) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&g
 
   let mut all_links: Vec&lt;Link&gt; = vec![];
   for path in month_paths {
+    let last_component: Component = path.leaf()<span class="fragment fade-in-then-out popover">Returns an `Option&lt;Component&gt;` with the last component of this path</span> // `leaf()` gets the latest component
+      .ok_or(Err(wasm_error!(WasmErrorInner::Guest(String::from("The path is empty")))))?.clone(); 
+    let month = String::try_from(last_component).map_err(|err| wasm_error!(err))?;<span class="fragment fade-in-then-out popover">Converts the component's byte array to a string</span> // Converts the component to a string
+  
     let mut links = get_links(anchor_hash, LinkTypes::PathToComment, None)?; // Get all the links created above
     all_links.append(&amp;mut links); // Collect the links
   }
@@ -300,7 +305,7 @@ fn get_comments_by_year(year: u32) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&g
   Ok(action_hashes)
 }
 </code></pre>
-          </fragment>
+          </span></fragment>
         </section>
 
         <section>
