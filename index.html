@@ -291,7 +291,7 @@ fn get_comments_by_year(year: u32) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&g
   let mut all_links: Vec&lt;Link&gt; = vec![];
   for path in month_paths {
     let last_component: Component = path.leaf()<span class="fragment fade-in-then-out popover">Returns an `Option&lt;Component&gt;` with the last component of this path</span> // `leaf()` gets the latest component
-      .ok_or(Err(wasm_error!(WasmErrorInner::Guest(String::from("The path is empty")))))?.clone(); 
+      .ok_or(wasm_error!(WasmErrorInner::Guest(String::from("The path is empty"))))?.clone(); 
     let month = String::try_from(last_component).map_err(|err| wasm_error!(err))?;<span class="fragment fade-in-then-out popover">Converts the component's byte array to a string</span> // Converts the component to a string
   
     let mut links = get_links(path.path_entry_hash()?, LinkTypes::PathToComment, None)?; // Get all the links created above
