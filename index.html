@@ -123,11 +123,16 @@
         <section language="markdown" animate="by-line with-ancestry">
           ### Anchors (I)
 
-          - Data in Holochain is structured as a graph of linked actions, entries and public keys
-          - This means that from a starting action, entry or agent, we can get to the data related to it
-          - For example, if we need a "get_comments_by_author(author: AgentPubKey)" query
-            - When we create the comment, we also create a link from the public key of the author to the creating action hash
-            - We can then implement "get_coments_by_author(author: AgentPubKey)" as a get links from that agent public key to get all the comments by that author
+          - Data in Holochain is best structured as a directed acyclic graph of linked actions, entries and public keys
+          - From a starting point ID (action, entry or agent), we typically want to retrieve certain data related to it
+          - For example, if our application will need to "get_comments_by_author(author: AgentPubKey)", then:
+            - When we create the comment,
+              - we also create a link
+                - from the public key of the author
+                - to the create action hash
+            - Inside "get_coments_by_author(author: AgentPubKey)"
+              - we get links from that agent public key
+              - to retrieve all the comments by that author
         </section>
 
         <section language="markdown" animate="by-line with-ancestry">
@@ -136,14 +141,11 @@
           - Problem: how do we build queries that don't have starting point?
             - For example: "get_all_comments()", which gets all comments that any agent has created
             - We can't go to all the cells and query all the comments that each cell has created as it's intractably expensive when the network grows
-          - Solution: hard code in the source code a deterministic entry
+          - Solution: hard code a deterministic entry in the source code
             - Whenever we create a comment, we also create a link from the hash of that deterministic entry
             - Then we can implement "get_all_comments()" by doing a get links from that hash that everyone knows
               - These deterministic entries are called "anchors"
-        </section>
-
-        <section language="markdown" animate="with-ancestry">
-          - Demo time: https://holochain-gym.github.io/developers/intermediate/anchors/#try-it
+          - Demo: https://holochain-gym.github.io/developers/intermediate/anchors/#try-it
         </section>
 
         <section>
@@ -204,9 +206,9 @@ fn create_comment(comment: Comment) -&gt; ExternResult&lt;ActionHash&gt; {
 
 #[hdk_extern]
 fn get_all_comments_hashes(_: ()) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&gt; {
-  let anchor = Anchor(String::from("all_comments"));
+  let anchor = Anchor(String::from("all_comments")); // Must use the same string as the create function
 
-  let anchor_hash = hash_entry(anchor)?;   // Must be the same than the create function
+  let anchor_hash = hash_entry(anchor)?;
 
   let links = get_links(anchor_hash, LinkTypes::AnchorToComment, None)?; // Get all the links created above
 
@@ -222,35 +224,27 @@ fn get_all_comments_hashes(_: ()) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&gt
         </section>
 
         <section language="markdown" animate="by-line with-ancestry">
-          ### Paths (I)
+          ### Paths (theory)
 
           - Anchors are great, but they can introduce problems
-            - If a large amount of links are attached to the same base, they can become a burden of storage and bandwidth for the cells holding those links
+            - If a large number of links are attached to the same base, they become a burden on the agents responsible for those links
               - This is know as a "DHT Hotspot"
-            - They don't work well with complex queries that need filtering, sorting, etc.
+            - It's impractice to sort or filter an oversized result set
               - For example, a query of the form "get_comment_by_date(start_date: Timestamp, end_date: Timestamp)"
-          - Solution: paths
-        </section>
-
-        <section language="markdown" animate="by-line with-ancestry">
-          ### Paths (II)
-
-          - Built-in to the HDK
+            - Paths solve these issues
+          - Paths are built-in to the HDK
           - Paths are anchor trees
             - Top level anchor acts as the root node
-            - This root node is linked to its children, which themselves are anchors
-            - This tree can be dynamically constructed and have arbitrary depth
-          - They are composed of a vector of components
+            - This root node links to its children, which are also anchors
+            - This tree can be dynamically constructed and can have arbitrary depth
+          - Paths are composed of a vector of components
             - Each component is an arbitrary byte array
             - Normally constructed from a string
-        </section>
-
-        <section language="markdown" animate="with-ancestry">
-          - Demo time: https://holochain-gym.github.io/developers/intermediate/paths/#try-it
-        </section>
+          - Demo: https://holochain-gym.github.io/developers/intermediate/paths/#try-it
+          </section>
 
         <section>
-          <h3>Paths (III)</h3>
+          <h3>Paths (code example)</h3>
 
           <fragment animate="by-line with-ancestry balanced separate-comments">
 
@@ -267,7 +261,7 @@ fn create_comment(comment: Comment) -&gt; ExternResult&lt;ActionHash&gt; {
   let dt: DateTime&lt;Utc&gt; = DateTime::from_utc(NaiveDateTime::from_timestamp(secs, nsecs), Utc);
 
   let path = Path::from(format!("all_comments.{}.{}"<span class="fragment fade-in-then-out popover">The '.' is the separator between components</span>, dt.year(), dt.month())); // Builds the path "all_comments.2022.7"
-  let typed_path = path.typed(LinkTypes::PathTimeIndex)?;<span class="fragment fade-in-then-out popover">"TypedPath" is a path with all the links of a certain type</span> // Add the link type to the path
+  let typed_path = path.typed(LinkTypes::PathTimeIndex)?;<span class="fragment fade-in-then-out popover">"TypedPath" is a path with all the links of a certain †ype</span> // Add the link type to the path
   typed_path.ensure()?;<span class="fragment fade-in-then-out popover">Creates the path tree structure, and all the necessary links</span> // Build the path's anchor tree
   
   create_link(
@@ -284,7 +278,7 @@ fn create_comment(comment: Comment) -&gt; ExternResult&lt;ActionHash&gt; {
 <section>
 
   <fragment animate="by-line with-ancestry balanced separate-comments">
-    <h3>Paths (IV)</h3>
+    <h3>Paths (roll-ups)</h3>
 
     <pre class="fragment fade-in"><code class="rust" data-noescape="">
 #[hdk_extern]
