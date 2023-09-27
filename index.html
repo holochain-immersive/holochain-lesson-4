@@ -38,7 +38,6 @@
         flex-direction: row;
       }
 
-
       section {
         text-align: left;
       }
@@ -131,6 +130,7 @@
           <h1>Anchors & Paths</h1>
         </section>
 
+        <!-- prettier-ignore -->
         <section language="markdown" animate="by-line with-ancestry">
           ### Anchors (I)
 
@@ -146,6 +146,7 @@
               - to retrieve all the comments by that author
         </section>
 
+        <!-- prettier-ignore -->
         <section language="markdown" animate="by-line with-ancestry">
           ### Anchors (II)
 
@@ -162,8 +163,8 @@
         <section>
           <h3>Anchors (III)</h3>
 
-            <div class="row">
-
+          <div class="row">
+            <!-- prettier-ignore -->
             <pre
               class="fragment fade-in" style="flex-basis: 800px;"
             ><code class="rust" data-noescape>
@@ -194,6 +195,7 @@ enum LinkTypes {
 </fragment>
 </code></pre>
 
+            <!-- prettier-ignore -->
             <pre
               class="fragment fade-in"
               style="margin-left: 16px"
@@ -236,9 +238,10 @@ fn get_all_comments_hashes(_: ()) -> ExternResult&lt;Vec&lt;ActionHash&gt;&gt; {
 }  
 </fragment>
 </code></pre>
-            </div>
+          </div>
         </section>
 
+        <!-- prettier-ignore -->
         <section language="markdown" animate="by-line with-ancestry">
           ### Paths (theory)
 
@@ -263,8 +266,8 @@ fn get_all_comments_hashes(_: ()) -> ExternResult&lt;Vec&lt;ActionHash&gt;&gt; {
           <h3>Paths (code example)</h3>
 
           <fragment animate="by-line with-ancestry balanced separate-comments">
-
-          <pre
+            <!-- prettier-ignore -->
+            <pre
           class="fragment fade-in"            
           ><code class="rust" data-noescape>
 use hdk::prelude::*;
@@ -291,15 +294,16 @@ fn create_comment(comment: Comment) -> ExternResult&lt;ActionHash&gt; {
 
   Ok(comment_action_hash)
 }
-</code></pre></fragment></section>
+</code></pre>
+          </fragment>
+        </section>
 
-<section>
+        <section>
+          <fragment animate="by-line with-ancestry balanced separate-comments">
+            <h3>Paths (roll-ups)</h3>
 
-  <fragment animate="by-line with-ancestry balanced separate-comments">
-    <h3>Paths (roll-ups)</h3>
-
-
-    <pre
+            <!-- prettier-ignore -->
+            <pre
     class="fragment fade-in"            
     ><code class="rust" data-noescape>
 #[hdk_extern]
@@ -349,7 +353,7 @@ fn get_comments_by_year(year: u32) -> ExternResult&lt;Vec&lt;ActionHash&gt;&gt; 
           RevealHighlight,
           RevealNotes,
           RevealAnimateFragments,
-          RevealEliminateEmptyLines
+          RevealEliminateEmptyLines,
         ],
       });
       deck.initialize();
