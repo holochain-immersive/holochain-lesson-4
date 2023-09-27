@@ -33,7 +33,6 @@
         flex-direction: row;
       }
 
-
       section {
         text-align: left;
       }
@@ -120,6 +119,7 @@
           <h1>Anchors &amp; Paths</h1>
         </section>
 
+        <!-- prettier-ignore -->
         <section language="markdown" animate="by-line with-ancestry">
           ### Anchors (I)
 
@@ -135,6 +135,7 @@
               - to retrieve all the comments by that author
         </section>
 
+        <!-- prettier-ignore -->
         <section language="markdown" animate="by-line with-ancestry">
           ### Anchors (II)
 
@@ -151,8 +152,8 @@
         <section>
           <h3>Anchors (III)</h3>
 
-            <div class="row">
-
+          <div class="row">
+            <!-- prettier-ignore -->
             <pre class="fragment fade-in" style="flex-basis: 800px;"><code class="rust" data-noescape="">
               <fragment animate="by-line with-ancestry balanced separate-comments">
 // Integrity
@@ -181,6 +182,7 @@ enum LinkTypes {
 </fragment>
 </code></pre>
 
+            <!-- prettier-ignore -->
             <pre class="fragment fade-in" style="margin-left: 16px"><code class="rust" data-noescape="">
 <fragment animate="by-line with-ancestry balanced separate-comments">
 // Coordinator
@@ -220,9 +222,10 @@ fn get_all_comments_hashes(_: ()) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&gt
 }  
 </fragment>
 </code></pre>
-            </div>
+          </div>
         </section>
 
+        <!-- prettier-ignore -->
         <section language="markdown" animate="by-line with-ancestry">
           ### Paths (theory)
 
@@ -247,8 +250,8 @@ fn get_all_comments_hashes(_: ()) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&gt
           <h3>Paths (code example)</h3>
 
           <fragment animate="by-line with-ancestry balanced separate-comments">
-
-          <pre class="fragment fade-in"><code class="rust" data-noescape="">
+            <!-- prettier-ignore -->
+            <pre class="fragment fade-in"><code class="rust" data-noescape="">
 use hdk::prelude::*;
 use integrity_zome::{EntryTypes, Comment, LinkTypes}; // Import the types defined in our integrity zome
 use chrono::*; // Import the chrono crate for time related utilites
@@ -273,15 +276,16 @@ fn create_comment(comment: Comment) -&gt; ExternResult&lt;ActionHash&gt; {
 
   Ok(comment_action_hash)
 }
-</code></pre></fragment></section>
+</code></pre>
+          </fragment>
+        </section>
 
-<section>
+        <section>
+          <fragment animate="by-line with-ancestry balanced separate-comments">
+            <h3>Paths (roll-ups)</h3>
 
-  <fragment animate="by-line with-ancestry balanced separate-comments">
-    <h3>Paths (roll-ups)</h3>
-
-
-    <pre class="fragment fade-in"><code class="rust" data-noescape="">
+            <!-- prettier-ignore -->
+            <pre class="fragment fade-in"><code class="rust" data-noescape="">
 #[hdk_extern]
 fn get_comments_by_year(year: u32) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&gt; {
   let year_path = Path::from(format!("all_comments.{}", year))<span class="fragment fade-in-then-out popover">Build the anchor in the intermediate node</span>.typed(LinkTypes::PathTimeIndex);
