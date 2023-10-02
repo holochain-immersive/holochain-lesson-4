@@ -1,122 +1,31 @@
-<!DOCTYPE html><html lang="en"><head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="Description" content="Put your description here.">
-    <base href="/">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="Description" content="Put your description here." />
+    <base href="/" />
 
+    
     <style>
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: sans-serif;
-        background-color: #ededed;
-        --r-main-font-size: 24px;
-        --r-heading-margin: 20px 0 12px 0;
-      }
-
-      .slides {
-        width: 75% !important;
-      }
-
-      .container {
-        top: 0 !important;
-        display: flex !important;
-        flex-direction: row !important;
-      }
-      .column {
-        display: flex;
-        flex-direction: column;
-      }
       .row {
         display: flex;
         flex-direction: row;
       }
-
-      section {
-        text-align: left;
-      }
-
-      .popover {
-        position: absolute;
-        background-color: #4d4d4d;
-        padding: 1rem 2rem;
-        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-        border-radius: 10px;
-        width: auto;
-        transform: translate(16px, -15px);
-        max-width: 600px;
-        white-space: break-spaces;
-      }
-      .popover:after {
-        content: "";
-        position: absolute;
-        top: 6px;
-        left: -8px;
-        border-style: solid;
-        border-width: 18px 12px 0;
-        border-color: #4d4d4d transparent;
-        display: block;
-        width: 0;
-        z-index: 1;
-        transform: translate(-50%, 50%) rotate(90deg);
-      }
-
-      .popover .hljs-meta,
-      .popover .hljs-class,
-      .popover .hljs-keyword,
-      .popover .hljs-string,
-      .popover .hljs-title {
-        color: rgb(221, 221, 221) !important;
-        font-weight: normal;
-      }
-
-      .reveal pre code {
-        max-height: 800px !important;
-      }
-
-      .dna {
-        background-color: green;
-      }
-      .zome {
-        background-color: blue;
-      }
-      .coordinator-zomes {
-        background-color: lightblue;
-      }
-
-      .dna,
-      .cell,
-      .zome,
-      .coordinator-zomes,
-      .source-chain,
-      .happ-bundle,
-      .box,
-      .dna-bundle,
-      .dht-shard,
-      .conductor,
-      .happ {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 12px;
-        border-width: 3px;
-        border-color: rgb(209, 209, 209);
-        border-style: solid;
-      }
     </style>
-    <link rel="stylesheet" href="holochain-lesson-4/bce6cb85.css">
-
-    <link rel="stylesheet" href="holochain-lesson-4/5265d60d.css">
-    <link rel="stylesheet" href="holochain-lesson-4/86125abe.css">
     <title>Holochain Lesson 4</title>
+    <script type="module" crossorigin src="/holochain-lesson-4/assets/index-95c3de76.js"></script>
+    <link rel="stylesheet" href="/holochain-lesson-4/assets/index-73e5cb3c.css">
   </head>
 
   <body>
     <div class="reveal">
       <div class="slides">
         <section>
-          <h1>Anchors &amp; Paths</h1>
+          <h1>Anchors & Paths</h1>
         </section>
 
         <!-- prettier-ignore -->
@@ -152,10 +61,13 @@
         <section>
           <h3>Anchors (III)</h3>
 
-          <div class="row">
+          <div class="row" style="justify-content: center">
             <!-- prettier-ignore -->
-            <pre class="fragment fade-in" style="flex-basis: 800px;"><code class="rust" data-noescape="">
-              <fragment animate="by-line with-ancestry balanced separate-comments">
+            <pre
+              class="fragment fade-in" style="flex-basis: 800px;"
+            ><code class="rust" data-noescape data-trim
+            animate="by-line balanced with-ancestry separate-comments trailing-comments-in-popover strike-on-error-in-comment"
+            >
 // Integrity
 use hdi::prelude::*;
 
@@ -179,40 +91,44 @@ enum EntryTypes {
 enum LinkTypes { 
   AnchorToComment,
 }
-</fragment>
 </code></pre>
 
             <!-- prettier-ignore -->
-            <pre class="fragment fade-in" style="margin-left: 16px"><code class="rust" data-noescape="">
-<fragment animate="by-line with-ancestry balanced separate-comments">
+            <pre
+              class="fragment fade-in"
+              style="margin-left: 16px"
+            ><code class="rust" data-noescape data-trim
+            animate="by-line balanced with-ancestry separate-comments trailing-comments-in-popover strike-on-error-in-comment"
+            >
 // Coordinator
 use hdk::prelude::*;
 
 #[hdk_extern]
-fn create_comment(comment: Comment) -&gt; ExternResult&lt;ActionHash&gt; {
+fn create_comment(comment: Comment) -> ExternResult&lt;ActionHash&gt; {
   let comment_action_hash = create_entry(EntryTypes::Comment(comment))?;
 
   let anchor = Anchor(String::from("all_comments"));
-
-  // Create the anchor entry
-  let _anchor_action_hash<span class="fragment fade-in-then-out popover">This hash is not deterministic: it will be different every time this function is executed</span> = create_entry(EntryTypes::Anchor(anchor))?;
+  let _action_hash = create_entry(EntryTypes::Anchor(anchor))?; // This hash is not 
+                                                                // deterministic: it will be 
+                                                                // different every time this 
+                                                                // function is executed
   
-  let anchor_entry_hash <span class="fragment fade-in-then-out popover">Hash is deterministic: will be the same independently of which cells executes this function</span>= hash_entry(anchor)?; // This hash is deterministic
-
-  create_link(
-    anchor_entry_hash, comment_action_hash, LinkTypes::AnchorToComment, ()
-  )?;
-
+  let anchor_entry_hash = hash_entry(anchor)?; // This hash is deterministic: it will be the 
+                                               // same independently of which cells executes 
+                                               // this function  
+  create_link(anchor_entry_hash, comment_action_hash, LinkTypes::AnchorToComment, ())?;
   Ok(comment_action_hash)
 }
 
 #[hdk_extern]
-fn get_all_comments_hashes(_: ()) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&gt; {
-  let anchor = Anchor(String::from("all_comments")); // Must use the same string as the create function
+fn get_all_comments_hashes(_: ()) -> ExternResult&lt;Vec&lt;ActionHash&gt;&gt; {
+  let anchor = Anchor(String::from("all_comments")); // Must use the same string as 
+                                                     // the create function
 
   let anchor_hash = hash_entry(anchor)?;
 
-  let links = get_links(anchor_hash, LinkTypes::AnchorToComment, None)?; // Get all the links created above
+  let links = get_links(anchor_hash, LinkTypes::AnchorToComment, None)?; // Get all the links
+                                                                         // created above
 
   let action_hashes: Vec&lt;ActionHash&gt; = links.into_iter()
     .map(|link| ActionHash::from(link.target))
@@ -220,7 +136,6 @@ fn get_all_comments_hashes(_: ()) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&gt
   
   Ok(action_hashes)
 }  
-</fragment>
 </code></pre>
           </div>
         </section>
@@ -249,26 +164,36 @@ fn get_all_comments_hashes(_: ()) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&gt
         <section>
           <h3>Paths (code example)</h3>
 
-          <fragment animate="by-line with-ancestry balanced separate-comments">
-            <!-- prettier-ignore -->
-            <pre class="fragment fade-in"><code class="rust" data-noescape="">
+          <!-- prettier-ignore -->
+          <pre
+          class="fragment fade-in"            
+          ><code class="rust" data-noescape data-trim
+            animate="by-line balanced with-ancestry separate-comments trailing-comments-in-popover strike-on-error-in-comment"
+          >
 use hdk::prelude::*;
-use integrity_zome::{EntryTypes, Comment, LinkTypes}; // Import the types defined in our integrity zome
+use integrity_zome::*; // Import the types defined in our integrity zome
 use chrono::*; // Import the chrono crate for time related utilites
 
 #[hdk_extern]
-fn create_comment(comment: Comment) -&gt; ExternResult&lt;ActionHash&gt; {
-  let comment_action_hash = create_entry(EntryTypes::Comment(comment))?; // Create comment as always
+fn create_comment(comment: Comment) -> ExternResult&lt;ActionHash&gt; {
+  let comment_action_hash = create_entry(EntryTypes::Comment(comment))?;
   
-  let (secs, nsecs) = sys_time()?.as_seconds_and_nanos(); // Get the current timestamp in microseconds
+  let (secs, nsecs) = sys_time()?.as_seconds_and_nanos(); // Get the current timestamp 
+                                                          // in microseconds
   let dt: DateTime&lt;Utc&gt; = DateTime::from_utc(NaiveDateTime::from_timestamp(secs, nsecs), Utc);
 
-  let path = Path::from(format!("all_comments.{}.{}"<span class="fragment fade-in-then-out popover">The '.' is the separator between components</span>, dt.year(), dt.month())); // Builds the path "all_comments.2022.7"
-  let typed_path = path.typed(LinkTypes::PathTimeIndex)?;<span class="fragment fade-in-then-out popover">"TypedPath" is a path with all the links of a certain †ype</span> // Add the link type to the path
-  typed_path.ensure()?;<span class="fragment fade-in-then-out popover">Creates the path tree structure, and all the necessary links</span> // Build the path's anchor tree
-  
+  let path = Path::from(
+    format!("all_comments.{}.{}", dt.year(), dt.month()) // The '.' is the separator 
+                                                         // between components
+  ); // Builds the path "all_comments.2022.7"
+
+  let typed_path = path.typed(LinkTypes::PathTimeIndex)?; // "TypedPath" is a path with all the
+                                                          // links of a certain †ype
+
+  typed_path.ensure()?; // Creates the path tree structure, and all the necessary links
+    
   create_link(
-    typed_path.path_entry_hash()?, <span class="fragment fade-in-then-out popover">Entry hash of the path</span>
+    typed_path.path_entry_hash()?, // Entry hash of the path
     comment_action_hash, 
     LinkTypes::PathToComment, 
     ()
@@ -277,29 +202,41 @@ fn create_comment(comment: Comment) -&gt; ExternResult&lt;ActionHash&gt; {
   Ok(comment_action_hash)
 }
 </code></pre>
-          </fragment>
         </section>
 
         <section>
-          <fragment animate="by-line with-ancestry balanced separate-comments">
-            <h3>Paths (roll-ups)</h3>
+          <h3>Paths (roll-ups)</h3>
 
-            <!-- prettier-ignore -->
-            <pre class="fragment fade-in"><code class="rust" data-noescape="">
+          <!-- prettier-ignore -->
+          <pre
+    class="fragment fade-in"            
+    ><code class="rust" data-noescape data-trim
+            animate="by-line balanced with-ancestry separate-comments trailing-comments-in-popover strike-on-error-in-comment"
+    >
 #[hdk_extern]
-fn get_comments_by_year(year: u32) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&gt; {
-  let year_path = Path::from(format!("all_comments.{}", year))<span class="fragment fade-in-then-out popover">Build the anchor in the intermediate node</span>.typed(LinkTypes::PathTimeIndex);
+fn get_comments_by_year(year: u32) -> ExternResult&lt;Vec&lt;ActionHash&gt;&gt; {
+  let year_path = Path::from(
+    format!("all_comments.{}", year) // Build the anchor in the intermediate node
+  ).typed(LinkTypes::PathTimeIndex); 
   
-  let month_paths: Vec&lt;Path&gt; = year_path.children_paths()?;<span class="fragment fade-in-then-out popover">Retrieves all the children node month paths</span>
+  let month_paths: Vec&lt;Path&gt; = year_path.children_paths()?; // Retrieves all the children
+                                                            // node month paths
 
   let mut all_links: Vec&lt;Link&gt; = vec![];
   for path in month_paths {
-    let last_component: Component = path.leaf()<span class="fragment fade-in-then-out popover">Returns an `Option&lt;Component&gt;` with the last component of this path</span> // `leaf()` gets the latest component
+    let last_component: Component = path.leaf() // Returns an "Option&lt;Component&gt;" with 
+                                                // the last component of this path
       .ok_or(wasm_error!(WasmErrorInner::Guest(String::from("The path is empty"))))?.clone(); 
-    let month = String::try_from(last_component).map_err(|err| wasm_error!(err))?;<span class="fragment fade-in-then-out popover">Converts the component's byte array to a string</span> // Converts the component to a string
+
+    let month = String::try_from(last_component) // Converts the component's byte array 
+                                                 // to a string
+      .map_err(|err| wasm_error!(err))?;
   
-    let mut links = get_links(path.path_entry_hash()?, LinkTypes::PathToComment, None)?; // Get all the links created above
-    all_links.append(&amp;mut links); // Collect the links
+    let mut links = get_links(
+      path.path_entry_hash()?, LinkTypes::PathToComment, None
+    )?; // Get all the links created above
+
+    all_links.append(&mut links); // Collect the links
   }
 
   let all_links: Vec&lt;ActionHash&gt; = links.into_iter()
@@ -309,7 +246,6 @@ fn get_comments_by_year(year: u32) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&g
   Ok(action_hashes)
 }
 </code></pre>
-          </fragment>
         </section>
 
         <section>
@@ -319,6 +255,5 @@ fn get_comments_by_year(year: u32) -&gt; ExternResult&lt;Vec&lt;ActionHash&gt;&g
     </div>
 
     
-  
-
-<script type="module" src="./holochain-lesson-4/68f4aae5.js"></script></body></html>
+  </body>
+</html>
